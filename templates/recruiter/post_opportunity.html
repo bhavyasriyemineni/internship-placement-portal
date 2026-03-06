@@ -1,0 +1,78 @@
+{% extends 'base_recruiter.html' %}
+{% block page_title %}Publish New Opportunity{% endblock %}
+
+{% block dashboard_content %}
+<div class="max-w-4xl mx-auto animate-in fade-in duration-700 pb-20">
+    <nav class="flex mb-6 text-gray-400 text-[10px] font-black uppercase tracking-widest" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li><a href="{% url 'recruiter_dashboard' %}" class="hover:text-[#1E3A8A]">Dashboard</a></li>
+            <li><i class="fa-solid fa-chevron-right mx-2 text-[8px]"></i></li>
+            <li class="text-[#1E3A8A]">Post Opportunity</li>
+        </ol>
+    </nav>
+
+    <form method="POST" class="space-y-8">
+        {% csrf_token %}
+        
+        <div class="bg-white p-8 md:p-10 rounded-[2rem] shadow-sm border border-gray-100">
+            <h3 class="text-xl font-bold text-[#1E3A8A] font-poppins mb-8 flex items-center gap-3">
+                <i class="fa-solid fa-file-signature text-[#10B981]"></i> Role Specifications
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="md:col-span-2">
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Professional Title</label>
+                    <input type="text" name="title" required placeholder="e.g. Graduate Engineer Trainee - Cloud Systems"
+                           class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all text-sm font-medium">
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Job Description & Responsibilities</label>
+                    <textarea name="description" rows="5" required
+                              class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all text-sm leading-relaxed"
+                              placeholder="Detail the day-to-day tasks and training goals..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-8 md:p-10 rounded-[2rem] shadow-sm border border-gray-100">
+            <h3 class="text-xl font-bold text-[#1E3A8A] font-poppins mb-8 flex items-center gap-3">
+                <i class="fa-solid fa-user-check text-[#10B981]"></i> Candidate Requirements
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="md:col-span-2">
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Eligibility Criteria</label>
+                    <input type="text" name="criteria" required placeholder="e.g. B.Tech CS/IT 2026 Batch only"
+                           class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all text-sm font-medium">
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Technical Skills Required (Comma Separated)</label>
+                    <input type="text" name="skills" required placeholder="Python, Django, AWS, SQL"
+                           class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all text-sm font-medium">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Application Deadline</label>
+                    <input type="date" name="deadline" required
+                           class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#1E3A8A] transition-all text-sm font-medium text-gray-500">
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-6 bg-[#1E3A8A] p-8 rounded-[2rem] shadow-xl">
+            <div class="hidden md:block">
+                <p class="text-white font-bold text-sm">Ready to find talent?</p>
+                <p class="text-blue-200 text-[10px] uppercase tracking-widest font-black">Post will go live immediately</p>
+            </div>
+            <div class="flex gap-4 w-full md:w-auto">
+                <a href="{% url 'recruiter_dashboard' %}" class="flex-1 text-center px-8 py-6 rounded-xl text-[20px] font-black text-blue-200 uppercase tracking-widest hover:bg-white/10 transition-all">Cancel</a>
+                <button type="submit" class="flex-1 bg-[#10B981] text-white px-10 py-4 rounded-xl text-[15px] font-black uppercase tracking-widest shadow-lg hover:shadow-[#10B981]/40 transition-all active:scale-95">
+                    Publish Opportunity <i class="fa-solid fa-paper-plane ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

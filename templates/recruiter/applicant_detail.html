@@ -1,0 +1,106 @@
+{% extends 'base_recruiter.html' %}
+{% block page_title %}Applicant Evaluation{% endblock %}
+
+{% block dashboard_content %}
+<div class="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-700">
+    
+    <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-8 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div class="flex items-center gap-8">
+            <div class="relative">
+                <img src="{{ app.student.student_profile.profile_picture.url }}" class="w-24 h-24 rounded-2xl object-cover border-4 border-slate-50 shadow-md">
+                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-[#10B981] text-white rounded-full flex items-center justify-center border-4 border-white">
+                    <i class="fa-solid fa-check text-[10px]"></i>
+                </div>
+            </div>
+            <div>
+                <h2 class="text-3xl font-bold text-[#1E3A8A] font-poppins">{{ app.student.username|title }}</h2>
+                <p class="text-gray-500 font-medium flex items-center gap-2 mt-1">
+                    {{ app.student.email }} 
+                    <span class="w-1.5 h-1.5 bg-slate-300 rounded-full"></span>
+                    Applied for: <span class="text-[#1E3A8A] font-bold">{{ app.opportunity.title }}</span>
+                </p>
+                <div class="flex gap-3 mt-4">
+                    <span class="bg-blue-50 text-[#1E3A8A] px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">CGPA: {{ app.student.student_profile.cgpa }}</span>
+                    {% if app.student.student_profile.resume %}
+                    <a href="{{ app.student.student_profile.resume.url }}" target="_blank" class="bg-slate-100 text-slate-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all">
+                        <i class="fa-solid fa-file-pdf mr-1"></i> View Resume
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-3 min-w-[200px]">
+            <form method="POST" action="{% url 'update_status' app.id %}" class="grid gap-2">
+                {% csrf_token %}
+                <button name="status" value="round1" class="w-full bg-[#1E3A8A] text-white py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:shadow-[0_0_15px_rgba(30,58,138,0.3)] transition-all">
+                    Shortlist for R1
+                </button>
+                <div class="grid grid-cols-2 gap-2">
+                    <button name="status" value="selected" class="bg-emerald-50 text-[#10B981] py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 hover:bg-[#10B981] hover:text-white transition-all">
+                        Direct Hire
+                    </button>
+                    <button name="status" value="rejected" class="bg-red-50 text-red-600 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border border-red-100 hover:bg-red-600 hover:text-white transition-all">
+                        Reject
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <div class="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm text-center">
+            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-8">AI Behavioral Score</h4>
+            <div class="relative inline-flex items-center justify-center">
+                <svg class="w-40 h-40 transform -rotate-90">
+                    <circle cx="80" cy="80" r="70" stroke="currentColor" stroke-width="12" fill="transparent" class="text-slate-100" />
+                    <circle cx="80" cy="80" r="70" stroke="currentColor" stroke-width="12" fill="transparent" class="text-[#10B981] transition-all duration-1000" 
+                            stroke-dasharray="439.8" 
+                            style="stroke-dashoffset: calc(439.8 - (439.8 * {{ app.ai_score|default:0 }}) / 100);" />
+                </svg>
+                <div class="absolute flex flex-col items-center">
+                    <span class="text-4xl font-black text-[#1E3A8A]">{{ app.ai_score|default:"0" }}%</span>
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">AI Score</span>
+                </div>
+            </div>
+            
+            <div class="mt-8 p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                <p class="text-[10px] font-black text-[#10B981] uppercase mb-1">Authenticity Status</p>
+                <p class="text-sm font-bold text-[#1E3A8A]">
+                    {% if app.is_authentic %}
+                        <i class="fa-solid fa-shield-check mr-1"></i> Verified Interaction
+                    {% else %}
+                        <i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1"></i> Flagged for Review
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
+                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-brain text-[#1E3A8A]"></i> AI Insight Summary
+                </h4>
+                <div class="prose prose-blue max-w-none">
+                    <p class="text-sm text-gray-600 leading-relaxed italic">
+                        "{{ app.ai_behavioral_notes|default:'Evaluation in progress. The AI is analyzing the candidate’s video session for confidence markers, technical depth, and environmental consistency.' }}"
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Candidate Keywords</h4>
+                    <button class="text-[10px] font-black text-[#1E3A8A] uppercase hover:underline">View Full Transcript</button>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    {% for skill in app.student.student_profile.skills.split %}
+                    <span class="px-4 py-2 bg-slate-50 border border-slate-100 text-[#1E3A8A] rounded-xl text-xs font-bold">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

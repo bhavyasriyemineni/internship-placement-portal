@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Student Dashboard | CareerBridge{% endblock %}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-blue: #1E3A8A;
+            --secondary-green: #10B981;
+            --bg-off-white: #F8FAFC;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-off-white);
+        }
+
+        .sidebar {
+            background-color: var(--primary-blue);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--secondary-green);
+            color: var(--secondary-green) !important;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .card-glow {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-glow:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.1);
+        }
+
+        .btn-glow-blue {
+            background: var(--primary-blue);
+            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2);
+        }
+
+        .btn-glow-blue:hover {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+
+    <aside class="sidebar w-64 text-white flex flex-col fixed h-full z-50">
+        <div class="p-6 flex items-center gap-3 border-b border-blue-800">
+            <div class="bg-white p-1.5 rounded-lg">
+                <i class="fa-solid fa-graduation-cap text-blue-900 text-xl"></i>
+            </div>
+            <span class="font-poppins font-bold text-lg tracking-tight">CareerBridge</span>
+        </div>
+
+        <nav class="flex-1 mt-6 px-4 space-y-2">
+            <a href="{% url 'student_dashboard' %}" class="nav-link flex items-center gap-4 py-3 px-4 rounded-lg text-gray-300 {% if request.resolver_match.url_name == 'student_dashboard' %}active text-white font-bold{% endif %}">
+                <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
+            </a>
+            <a href="{% url 'student_profile' %}" class="nav-link flex items-center gap-4 py-3 px-4 rounded-lg text-gray-300 {% if 'profile' in request.path %}active text-white font-bold{% endif %}">
+                <i class="fa-solid fa-user-pen w-5"></i> My Profile
+            </a>
+            <a href="{% url 'opportunity_list' %}" class="nav-link flex items-center gap-4 py-3 px-4 rounded-lg text-gray-300">
+                <i class="fa-solid fa-briefcase w-5"></i> Explore Roles
+            </a>
+            <a href="{% url 'my_applications' %}" class="nav-link flex items-center gap-4 py-3 px-4 rounded-lg text-gray-300">
+                <i class="fa-solid fa-file-invoice w-5"></i> Applications
+            </a>
+            <div class="pt-4 pb-2 text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em] px-4">AI Tools</div>
+            <a href="{% url 'ai_interview_intro' %}"  class="nav-link flex items-center gap-4 py-3 px-4 rounded-lg text-gray-300">
+                <i class="fa-solid fa-video w-5"></i> AI Interview
+            </a>
+        </nav>
+
+        <div class="p-6 border-t border-blue-800">
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 py-3 px-4 rounded-lg text-red-400 hover:bg-red-500/10 transition-all">
+                <i class="fa-solid fa-power-off"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 ml-64">
+        <header class="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-40">
+            <div>
+                <h1 class="font-poppins font-bold text-gray-800">{% block page_title %}Overview{% endblock %}</h1>
+                <p class="text-xs text-gray-400">{{ request.user.email }}</p>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <div class="relative">
+                    <a href="{% url 'notification_list' %}" class="relative w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[#1E3A8A] transition-all hover:bg-slate-100 rounded-xl">
+                        <i class="fa-solid fa-bell text-xl"></i>
+                        {% if unread_notifications > 0 %}
+                        <span class="absolute top-2 right-2 w-4 h-4 bg-red-500 text-white text-[8px] font-black rounded-full flex items-center justify-center border-2 border-white animate-pulse">
+                            {{ unread_notifications }}
+                        </span>
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="flex items-center gap-3 pl-6 border-l border-gray-100">
+                    <div class="text-right">
+                        <p class="text-sm font-bold text-gray-800">{{ request.user.username }}</p>
+                        <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider">Student Verified</p>
+                    </div>
+                    <div class="w-10 h-10 bg-blue-100 text-blue-900 rounded-full flex items-center justify-center font-bold">
+                        {{ request.user.username|first|upper }}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-8">
+            {% block dashboard_content %}{% endblock %}
+        </div>
+    </main>
+
+</body>
+</html>

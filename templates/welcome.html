@@ -1,0 +1,83 @@
+{% extends 'base_public.html' %}
+{% load static %}
+
+{% block title %}Welcome | CareerBridge Placement Portal{% endblock %}
+
+{% block content %}
+<section class="relative bg-white pt-20 pb-32 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
+        <div class="z-10 animate-in fade-in slide-in-from-left-10 duration-700">
+            <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
+                <span class="glowing-dot"></span> AI-Powered Placement Hub
+            </div>
+            <h1 class="text-5xl lg:text-7xl font-bold text-blue-900 leading-tight mb-6">
+                Bridge the Gap Between <span class="text-emerald-500 underline decoration-4 underline-offset-8">Education</span> and Industry.
+            </h1>
+            <p class="text-lg text-gray-600 mb-10 leading-relaxed max-w-lg">
+                The centralized platform for students to find elite internships and industries to identify perfect talent through our Video-AI behavioral analysis.
+            </p>
+            <div class="flex flex-wrap gap-4">
+                <a href="{% url 'signup' %}" class="btn-primary text-white px-10 py-5 rounded-2xl font-bold flex items-center gap-3">
+                    Get Started <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a href="#about" class="bg-gray-100 text-gray-700  border border-gray-400 shadow-xl px-10 py-5 rounded-2xl font-bold hover:bg-gray-200 transition-all">
+                    Learn More
+                </a>
+            </div>
+        </div>
+
+        <div class="relative group">
+            <div class="absolute -inset-4 bg-emerald-100/50 rounded-full blur-3xl group-hover:bg-blue-100/50 transition-all duration-1000"></div>
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1000" 
+                 class="relative rounded-[2rem] shadow-2xl border-8 border-white animate-in zoom-in-75 duration-1000" alt="Industry Training">
+        </div>
+    </div>
+</section>
+
+<section id="about" class="py-24 bg-slate-50 border-y border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-blue-900 mb-4">Core Ecosystem</h2>
+            <p class="text-gray-500">Three dedicated modules working in perfect sync.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white p-10 rounded-[2rem] border border-gray-400 shadow-xl hover:shadow-xl transition-all group">
+                <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-blue-900 transition-colors">
+                    <i class="fa-solid fa-user-graduate text-blue-900 text-2xl group-hover:text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4">Student Hub</h3>
+                <ul class="text-gray-500 space-y-3 text-sm leading-relaxed">
+                    <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Professional Profile Building</li>
+                    <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> AI-Video Mock Interviews</li>
+                    <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Direct Internship Applications</li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-10 rounded-[2rem] border border-gray-400 shadow-xl hover:shadow-xl transition-all group">
+                <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-emerald-500 transition-colors">
+                    <i class="fa-solid fa-building text-emerald-600 text-2xl group-hover:text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4">Recruiter Portal</h3>
+                <ul class="text-gray-500 space-y-3 text-sm leading-relaxed">
+                    <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Post Training Opportunities</li>
+                    <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> AI Behavioral Analysis Scores</li>
+                    <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Automated Candidate Screening</li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-10 rounded-[2rem] border border-gray-400 shadow-xl hover:shadow-xl transition-all group">
+                <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-slate-800 transition-colors">
+                    <i class="fa-solid fa-chart-line text-slate-700 text-2xl group-hover:text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4">Admin Insights</h3>
+                <ul class="text-gray-500 space-y-3 text-sm leading-relaxed">
+                    <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Placement Statistics</li>
+                    <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Verification & Security</li>
+                    <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> System Activity Auditing</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

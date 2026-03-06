@@ -1,0 +1,50 @@
+{% extends 'base_student.html' %}
+{% block page_title %}AI Mock Interview Engine{% endblock %}
+
+{% block dashboard_content %}
+<div class="max-w-4xl mx-auto text-center py-10 space-y-8">
+    <div class="bg-white p-12 rounded-[2rem] shadow-xl border border-gray-100 relative overflow-hidden">
+        <div class="absolute -top-10 -left-10 w-40 h-40 bg-blue-50 rounded-full blur-3xl opacity-50"></div>
+        
+        <div class="w-24 h-24 bg-blue-50 text-[#1E3A8A] rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-inner">
+            <i class="fa-solid fa-robot text-4xl animate-pulse"></i>
+        </div>
+        
+        <h2 class="text-3xl font-bold text-[#1E3A8A] mb-4">Start Your Adaptive Interview</h2>
+        <p class="text-gray-500 max-w-md mx-auto mb-10 leading-relaxed">
+            Practice for your specific roles. Our AI will analyze your speech, confidence, and knowledge based on your profile inputs.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 text-left">
+            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <i class="fa-solid fa-microphone text-[#10B981] mb-2"></i>
+                <h5 class="text-[10px] font-black uppercase text-gray-400">Step 1</h5>
+                <p class="text-xs font-bold text-gray-700">Self Introduction</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <i class="fa-solid fa-brain text-blue-400 mb-2"></i>
+                <h5 class="text-[10px] font-black uppercase text-gray-400">Step 2</h5>
+                <p class="text-xs font-bold text-gray-700">Knowledge Check</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <i class="fa-solid fa-chart-line text-purple-400 mb-2"></i>
+                <h5 class="text-[10px] font-black uppercase text-gray-400">Step 3</h5>
+                <p class="text-xs font-bold text-gray-700">Insight Analysis</p>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            {% for app in applications %}
+                <button onclick="window.location.href='{% url 'ai_mock_interview' app.id %}'"
+                        class="bg-[#1E3A8A] text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:shadow-[0_10px_30px_rgba(30,58,138,0.4)] transition-all w-full">
+                    Start Interview for {{ app.opportunity.title }}
+                </button>
+            {% empty %}
+                <p class="text-gray-500 font-semibold">
+                    You must apply to at least one opportunity before starting an AI interview.
+                </p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

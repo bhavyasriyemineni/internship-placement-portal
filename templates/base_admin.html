@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel | CareerBridge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar-admin { background-color: #0F172A; width: 260px; }
+        .nav-admin:hover { background: rgba(30, 58, 138, 0.4); border-right: 4px solid #10B981; }
+    </style>
+</head>
+<body class="flex bg-[#F8FAFC]">
+    <aside class="sidebar-admin h-screen fixed text-white p-6">
+        <h1 class="text-xl font-bold mb-10 text-[#10B981]">CareerBridge Admin</h1>
+        <nav class="space-y-4">
+            <a href="{% url 'admin_dashboard' %}" class="nav-admin block p-3 rounded text-sm"><i class="fa-solid fa-gauge mr-2"></i> Dashboard</a>
+            <a href="{% url 'manage_users' %}" class="nav-admin block p-3 rounded text-sm"><i class="fa-solid fa-users mr-2"></i> Manage Users</a>
+            <a href="{% url 'admin_reports' %}" class="nav-admin block p-3 rounded text-sm"><i class="fa-solid fa-chart-line mr-2"></i> Reports</a>
+            <a href="{% url 'system_logs' %}" class="nav-admin block p-3 rounded text-sm"><i class="fa-solid fa-list-ul mr-2"></i> System Logs</a>
+            <div class="border-t border-slate-700 pt-4">
+                <a href="{% url 'logout' %}" class="text-red-400 p-3 block text-sm"><i class="fa-solid fa-power-off mr-2"></i> Logout</a>
+            </div>
+        </nav>
+    </aside>
+    <main class="flex-1 ml-[260px] p-10">
+        {% block admin_content %}{% endblock %}
+    </main>
+</body>
+</html>

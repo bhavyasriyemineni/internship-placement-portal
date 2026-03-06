@@ -1,0 +1,49 @@
+{% extends 'base_public.html' %}
+
+{% block title %}Verify Your Email | CareerBridge{% endblock %}
+
+{% block content %}
+<div class="min-h-[80vh] flex items-center justify-center py-12 px-4">
+    <div class="max-w-md w-full bg-white p-10 rounded-[2rem] shadow-soft border border-gray-100 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+        
+        <div class="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-envelope-circle-check text-3xl"></i>
+        </div>
+
+        <h2 class="text-3xl font-bold text-blue-900 font-poppins mb-2">Check Your Email</h2>
+        <p class="text-gray-500 text-sm mb-8">
+            We've sent a 6-digit verification code to <br>
+            <span class="text-blue-900 font-semibold">{{ request.session.unverified_user_email }}</span>
+        </p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-6 p-4 rounded-xl text-sm font-bold bg-red-50 text-red-700 border border-red-100">
+                    {{ message }} 
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Enter 6-Digit OTP</label>
+                <input type="text" name="otp" maxlength="6" required 
+                       class="w-full text-center text-3xl tracking-[1em] font-bold p-4 bg-slate-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                       placeholder="000000">
+            </div>
+
+            <button type="submit" class="w-full btn-primary text-white p-5 rounded-2xl font-bold uppercase tracking-widest text-sm shadow-lg hover:shadow-emerald-500/20 transition-all">
+                Verify Account
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-gray-100">
+            <p class="text-sm text-gray-500">
+                Didn't receive the code? 
+                <a href="#" class="text-blue-900 font-bold hover:text-emerald-500 transition-colors">Resend Code</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

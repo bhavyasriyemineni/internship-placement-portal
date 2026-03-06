@@ -1,0 +1,110 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}User Management | CareerBridge Admin{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
+    
+    <div class="flex flex-col md:flex-row justify-between items-end gap-6">
+        <div>
+            <h2 class="text-2xl font-bold text-[#1E3A8A] font-poppins">User Management</h2>
+            <p class="text-sm text-gray-500">Monitor and control access for students and industrial partners.</p>
+        </div>
+        
+        <div class="bg-white p-1.5 rounded-2xl shadow-sm border border-gray-100 flex gap-1">
+            <a href="?role=all" class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all {% if role_filter == 'all' %}bg-[#1E3A8A] text-white shadow-lg{% else %}text-gray-400 hover:bg-slate-50{% endif %}">
+                All Users
+            </a>
+            <a href="?role=student" class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all {% if role_filter == 'student' %}bg-[#1E3A8A] text-white shadow-lg{% else %}text-gray-400 hover:bg-slate-50{% endif %}">
+                Students
+            </a>
+            <a href="?role=recruiter" class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all {% if role_filter == 'recruiter' %}bg-[#1E3A8A] text-white shadow-lg{% else %}text-gray-400 hover:bg-slate-50{% endif %}">
+                Recruiters
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 border-b border-gray-100">
+                    <tr>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Profile</th>
+                        <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Role</th>
+                        <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Account Status</th>
+                        <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Date Joined</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Administrative Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    {% for user in users %}
+                    <tr class="hover:bg-blue-50/20 transition-all group">
+                        <td class="px-8 py-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-[#1E3A8A] font-bold border border-slate-200">
+                                    {{ user.email|first|upper }}
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-slate-800">{{ user.email }}</p>
+                                    <p class="text-[10px] text-gray-400">UID: #{{ user.id|add:1000 }}</p>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td class="px-6 py-6">
+                            <span class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest
+                                {% if user.role == 'student' %}bg-blue-50 text-[#1E3A8A] border border-blue-100
+                                {% else %}bg-purple-50 text-purple-600 border border-purple-100{% endif %}">
+                                {{ user.role }}
+                            </span>
+                        </td>
+
+                        <td class="px-6 py-6">
+                            {% if user.is_active %}
+                            <div class="flex items-center gap-2 text-[#10B981]">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse"></span>
+                                <span class="text-[10px] font-black uppercase tracking-widest">Active</span>
+                            </div>
+                            {% else %}
+                            <div class="flex items-center gap-2 text-red-400">
+                                <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                                <span class="text-[10px] font-black uppercase tracking-widest">Suspended</span>
+                            </div>
+                            {% endif %}
+                        </td>
+
+                        <td class="px-6 py-6 text-xs font-medium text-gray-500">
+                            {{ user.date_joined|date:"d M, Y" }}
+                        </td>
+
+                        <td class="px-8 py-6 text-right">
+                            <div class="flex justify-end gap-2">
+                                {% if user.is_active %}
+                                <a href="{% url 'toggle_user_status' user_id=user.id action='suspend' %}" 
+                                   class="px-4 py-2 bg-red-50 text-red-600 rounded-xl text-[10px] font-black uppercase tracking-widest border border-red-100 hover:bg-red-600 hover:text-white transition-all">
+                                    Suspend
+                                </a>
+                                {% else %}
+                                <a href="{% url 'toggle_user_status' user_id=user.id action='approve' %}" 
+                                   class="px-4 py-2 bg-emerald-50 text-[#10B981] rounded-xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 hover:bg-[#10B981] hover:text-white transition-all">
+                                    Approve Access
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-8 py-20 text-center">
+                            <i class="fa-solid fa-users-slash text-4xl text-slate-100 mb-4 block"></i>
+                            <p class="text-sm text-gray-400 italic">No users found matching your criteria.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

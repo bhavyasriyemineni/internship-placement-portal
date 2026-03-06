@@ -1,0 +1,352 @@
+{% extends 'base_student.html' %}
+{% load static %}
+
+{% block title %}AI Live Interview | CareerBridge{% endblock %}
+
+{% block dashboard_content %}
+<div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-[#1E3A8A]/10 rounded-full blur-[120px] animate-pulse"></div>
+    <div class="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-[#10B981]/10 rounded-full blur-[120px] animate-pulse" style="animation-delay: 2s;"></div>
+</div>
+
+<div class="max-w-7xl mx-auto relative z-10">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+            <h2 class="text-4xl font-black text-[#1E3A8A] font-poppins tracking-tight">AI Virtual Assessment</h2>
+            <p class="text-gray-500 font-medium">Role: <span class="text-[#1E3A8A] font-bold px-2 py-1 bg-blue-50 rounded-lg ml-1">{{ application.opportunity.title }}</span></p>
+        </div>
+        <div class="flex items-center gap-4 bg-white/80 backdrop-blur-md px-6 py-4 rounded-[1.5rem] shadow-xl border border-white/50">
+            <div class="flex flex-col items-end">
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Time Remaining</p>
+                <p id="timer" class="text-2xl font-black text-[#1E3A8A] tabular-nums">15:00</p>
+            </div>
+            <div class="h-10 w-px bg-gray-200"></div>
+            <div class="relative">
+                <i class="fa-solid fa-stopwatch text-3xl text-[#10B981]"></i>
+                <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-8 space-y-6">
+            <div class="bg-slate-900 rounded-[3rem] shadow-2xl border-[6px] border-white overflow-hidden relative group transition-all duration-500 hover:shadow-[#1E3A8A]/10">
+                <div class="absolute top-8 left-8 z-30 flex items-center gap-3 bg-black/50 backdrop-blur-2xl px-5 py-2.5 rounded-2xl border border-white/20">
+                    <div class="flex gap-1 items-center">
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                        <span class="text-[10px] font-black uppercase text-white tracking-[0.2em]">Live Session</span>
+                    </div>
+                </div>
+
+                <div class="aspect-video relative overflow-hidden flex items-center justify-center bg-gradient-to-br from-[#0F172A] to-[#1E293B]">
+                    <video id="webcam" autoplay playsinline muted class="w-full h-full object-cover opacity-90 transition-opacity duration-1000"></video>
+                    
+                    <div id="scanner" class="absolute inset-0 pointer-events-none hidden z-20">
+                        <div class="absolute inset-0 border-[20px] border-[#10B981]/5"></div>
+                        <div class="w-full h-[2px] bg-gradient-to-r from-transparent via-[#10B981] to-transparent absolute top-0 animate-[scan_4s_linear_infinite] shadow-[0_0_20px_#10B981]"></div>
+                    </div>
+
+                    <canvas id="hud-overlay" class="absolute inset-0 pointer-events-none z-20"></canvas>
+
+                    <div id="camera-prompt" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-md z-40 transition-all duration-1000">
+                        <div class="w-28 h-28 bg-white/5 rounded-full flex items-center justify-center mb-8 border border-white/10 relative">
+                            <i class="fa-solid fa-shield-halved text-4xl text-white"></i>
+                            <div class="absolute inset-0 rounded-full border border-emerald-500/30 animate-ping"></div>
+                        </div>
+                        <h3 class="text-white font-poppins font-bold text-2xl mb-3 tracking-tight">Biometric Initialization</h3>
+                        <p class="text-slate-400 text-sm mb-10 text-center max-w-xs leading-relaxed">System is ready for technical assessment. Ensure stable internet and high audio clarity.</p>
+                        <button onclick="startInterview()" class="group bg-[#10B981] text-white px-12 py-5 rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] shadow-[0_20px_40px_rgba(16,185,129,0.3)] hover:shadow-[#10B981]/50 hover:-translate-y-1 transition-all active:scale-95">
+                            Launch Assessment <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-10 bg-white relative">
+                    <div class="flex gap-8 items-start">
+                        <div class="relative shrink-0">
+                            <div class="w-16 h-16 bg-[#1E3A8A] rounded-[1.2rem] flex items-center justify-center shadow-xl shadow-blue-900/20">
+                                <i class="fa-solid fa-robot text-white text-2xl"></i>
+                            </div>
+                            <div id="mic-indicator" class="absolute -bottom-2 -right-2 w-6 h-6 bg-slate-100 rounded-full border-4 border-white flex items-center justify-center transition-colors duration-300">
+                                <i class="fa-solid fa-microphone text-[10px] text-slate-400"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-3">AI Evaluator Analysis</h4>
+                            <p id="ai-question" class="text-2xl font-bold text-[#1E3A8A] leading-relaxed transition-all duration-500">
+                                Please initialize the session to start.
+                            </p>
+                            <div id="typing-indicator" class="hidden mt-6 flex gap-2">
+                                <div class="w-2.5 h-2.5 bg-[#10B981] rounded-full animate-bounce"></div>
+                                <div class="w-2.5 h-2.5 bg-[#10B981] rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                                <div class="w-2.5 h-2.5 bg-[#10B981] rounded-full animate-bounce [animation-delay:0.4s]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-4 space-y-8">
+            <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-xl relative overflow-hidden group">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-50/50 rounded-full transition-transform group-hover:scale-110"></div>
+                
+                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-8 relative z-10 flex items-center justify-between">
+                    Security Matrix
+                    <i class="fa-solid fa-fingerprint text-[#1E3A8A] text-lg"></i>
+                </h4>
+                
+                <div class="space-y-6 relative z-10">
+                    <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs font-bold text-slate-600">Face Analytics</span>
+                        <div class="flex items-center gap-3">
+                            <span id="stat-face" class="text-[10px] font-black text-gray-400">SCANNING</span>
+                            <div id="face-dot" class="w-2.5 h-2.5 rounded-full bg-slate-200"></div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs font-bold text-slate-600">Eye-Gaze tracking</span>
+                        <div class="flex items-center gap-3">
+                            <span id="stat-gaze" class="text-[10px] font-black text-gray-400">CALIBRATING</span>
+                            <div id="gaze-dot" class="w-2.5 h-2.5 rounded-full bg-slate-200"></div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs font-bold text-slate-600">Audio Stream</span>
+                        <div class="flex items-end gap-[2px] h-3">
+                            <div class="w-1 bg-emerald-400 rounded-full animate-[wave_1s_infinite_ease-in-out]"></div>
+                            <div class="w-1 bg-emerald-400 rounded-full animate-[wave_0.8s_infinite_ease-in-out_0.2s]"></div>
+                            <div class="w-1 bg-emerald-400 rounded-full animate-[wave_1.2s_infinite_ease-in-out_0.4s]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-xl">
+                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-10">Assessment Journey</h4>
+                <div class="space-y-10 relative">
+                    <div class="absolute left-[17px] top-2 bottom-2 w-[2px] bg-slate-100"></div>
+                    
+                    <div id="step-row-1" class="relative flex items-center gap-6 group transition-all duration-500 opacity-40">
+                        <div id="step-1" class="w-9 h-9 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center z-10 border-4 border-white shadow-sm transition-all duration-500">
+                            <i class="fa-solid fa-id-card text-xs"></i>
+                        </div>
+                        <span class="text-xs font-black uppercase tracking-widest text-slate-400">Introduction</span>
+                    </div>
+
+                    <div id="step-row-2" class="relative flex items-center gap-6 group transition-all duration-500 opacity-40">
+                        <div id="step-2" class="w-9 h-9 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center z-10 border-4 border-white shadow-sm transition-all duration-500">
+                            <i class="fa-solid fa-microchip text-xs"></i>
+                        </div>
+                        <span class="text-xs font-black uppercase tracking-widest text-slate-400">Technical Domain</span>
+                    </div>
+
+                    <div id="step-row-3" class="relative flex items-center gap-6 group transition-all duration-500 opacity-40">
+                        <div id="step-3" class="w-9 h-9 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center z-10 border-4 border-white shadow-sm transition-all duration-500">
+                            <i class="fa-solid fa-chart-simple text-xs"></i>
+                        </div>
+                        <span class="text-xs font-black uppercase tracking-widest text-slate-400">Psychometrics</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="endSession()" class="w-full bg-red-50 text-red-600 p-6 rounded-[1.5rem] font-black uppercase text-[11px] tracking-[0.2em] border-2 border-red-100 hover:bg-red-600 hover:text-white hover:shadow-2xl hover:shadow-red-200 transition-all active:scale-95">
+                Forfeit Assessment
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes scan {
+        0% { top: 0%; }
+        100% { top: 100%; }
+    }
+    @keyframes wave {
+        0%, 100% { height: 4px; }
+        50% { height: 12px; }
+    }
+    .active-step-row {
+        opacity: 1 !important;
+        transform: translateX(10px);
+    }
+    .active-step-icon {
+        background-color: #1E3A8A !important;
+        color: white !important;
+        box-shadow: 0 10px 20px rgba(30, 58, 138, 0.3) !important;
+        transform: scale(1.2);
+    }
+</style>
+
+<script>
+    let recognition;
+    let isListening = false;
+    let interviewStep = 1;
+    const appId = "{{ application.id }}";
+
+    // 1. Camera & HUD Startup
+    async function startInterview() {
+        const video = document.getElementById('webcam');
+        const prompt = document.getElementById('camera-prompt');
+        const scanner = document.getElementById('scanner');
+        
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { width: 1280, height: 720 }, 
+                audio: true 
+            });
+            video.srcObject = stream;
+            prompt.style.opacity = '0';
+            setTimeout(() => {
+                prompt.classList.add('hidden');
+                scanner.classList.remove('hidden');
+                initiateSpeechEngine();
+                initiateAI();
+                startBiometricSimulation(); 
+            }, 600);
+        } catch (err) {
+            alert("Camera & Mic permissions are mandatory for AI Proctoring.");
+        }
+    }
+
+    // 2. Speech Engine (STT)
+    function initiateSpeechEngine() {
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                processAnswer(transcript);
+            };
+
+            recognition.onstart = () => {
+                document.getElementById('mic-indicator').classList.replace('bg-slate-100', 'bg-emerald-500');
+                document.getElementById('mic-indicator').querySelector('i').classList.replace('text-slate-400', 'text-white');
+            };
+
+            recognition.onend = () => {
+                document.getElementById('mic-indicator').classList.replace('bg-emerald-500', 'bg-slate-100');
+                document.getElementById('mic-indicator').querySelector('i').classList.replace('text-white', 'text-slate-400');
+                if(isListening) recognition.start(); 
+            };
+        }
+    }
+
+    // 3. The Backend Bridge
+    async function processAnswer(text, isLast = false) {
+        const questionEl = document.getElementById('ai-question');
+        const typing = document.getElementById('typing-indicator');
+        
+        isListening = false;
+        if(recognition) recognition.stop();
+        typing.classList.remove('hidden');
+        questionEl.classList.add('opacity-0');
+
+        try {
+            const response = await fetch("{% url 'process_ai_interview' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    answer: text,
+                    application_id: appId,
+                    is_last: isLast,
+                    behavioral: { faces: 1, gaze_stable: true }
+                })
+            });
+
+            const data = await response.json();
+            
+            if (data.is_finished) {
+                window.location.href = data.redirect_url;
+            } else {
+                // Update Step UI logic (Simple progression for demo)
+                if(interviewStep < 3) {
+                    interviewStep++;
+                    updateWorkflowUI(interviewStep);
+                }
+
+                setTimeout(() => {
+                    typing.classList.add('hidden');
+                    questionEl.innerText = data.question;
+                    questionEl.classList.remove('opacity-0');
+                    isListening = true;
+                    if(recognition) recognition.start();
+                }, 1000);
+            }
+        } catch (error) {
+            console.error("AI Error:", error);
+            typing.classList.add('hidden');
+            questionEl.classList.remove('opacity-0');
+        }
+    }
+
+    function updateWorkflowUI(step) {
+        document.querySelectorAll('.active-step-row').forEach(r => r.classList.remove('active-step-row'));
+        document.querySelectorAll('.active-step-icon').forEach(i => i.classList.remove('active-step-icon'));
+        
+        document.getElementById(`step-row-${step}`).classList.add('active-step-row');
+        document.getElementById(`step-${step}`).classList.add('active-step-icon');
+    }
+
+    // 4. Biometric UI Simulation
+    function startBiometricSimulation() {
+        setInterval(() => {
+            const statuses = ['SECURE', 'TRACKING', 'STABLE'];
+            const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+            updateStatus('stat-face', randomStatus, '#10B981', 'face-dot');
+            updateStatus('stat-gaze', 'LOCKED', '#10B981', 'gaze-dot');
+        }, 4000);
+    }
+
+    function initiateAI() {
+        const questionEl = document.getElementById('ai-question');
+        const typing = document.getElementById('typing-indicator');
+        
+        updateWorkflowUI(1);
+        updateStatus('stat-face', 'IDENTIFIED', '#10B981', 'face-dot');
+
+        typing.classList.remove('hidden');
+        setTimeout(() => {
+            typing.classList.add('hidden');
+            questionEl.innerText = "Greetings. I have initialized the assessment for the {{ application.opportunity.title }} position. Let's begin with a brief overview of your professional journey.";
+            isListening = true;
+            if(recognition) recognition.start();
+        }, 3000);
+    }
+
+    function updateStatus(id, text, color, dotId) {
+        const el = document.getElementById(id);
+        if(el) {
+            el.innerText = text;
+            el.style.color = color;
+            document.getElementById(dotId).style.backgroundColor = color;
+        }
+    }
+
+    // 5. Timer Logic
+    let seconds = 900;
+    setInterval(() => {
+        if (seconds > 0) {
+            seconds--;
+            let m = Math.floor(seconds / 60);
+            let s = seconds % 60;
+            document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+        } else {
+            processAnswer("Time expired", true);
+        }
+    }, 1000);
+
+    function endSession() {
+        if(confirm("Forfeiting will end the assessment without a score. Continue?")) {
+            window.location.href = "{% url 'student_dashboard' %}";
+        }
+    }
+</script>
+{% endblock %}

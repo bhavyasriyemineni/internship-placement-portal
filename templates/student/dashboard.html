@@ -1,0 +1,68 @@
+{% extends 'base_student.html' %}
+{% block page_title %}Dashboard Overview{% endblock %}
+
+{% block dashboard_content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-xl shadow-xl border-l-4 border-[#1E3A8A] transition-transform hover:scale-105">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Applications</p>
+        <h3 class="text-3xl font-bold text-[#1E3A8A]">{{ total_apps }}</h3>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-xl border-l-4 border-[#10B981] transition-transform hover:scale-105">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Upcoming Interviews</p>
+        <h3 class="text-3xl font-bold text-[#1E3A8A]">{{ interviews }}</h3>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-xl border-l-4 border-blue-400 transition-transform hover:scale-105">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Selected Roles</p>
+        <h3 class="text-3xl font-bold text-[#1E3A8A]">{{ selected }}</h3>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-xl border-l-4 border-purple-500 transition-transform hover:scale-105">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Profile Score</p>
+        <h3 class="text-3xl font-bold text-[#1E3A8A]">{{ profile_strength }}%</h3>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-xl overflow-hidden border border-gray-200 shadow-xl">
+        <div class="p-5 border-b border-gray-50 flex justify-between items-center">
+            <h4 class="font-bold text-gray-700">Recent Applications</h4>
+            <a href="{% url 'my_applications' %}" class="text-xs font-semibold text-[#1E3A8A] hover:underline">View All</a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50 text-[10px] uppercase font-bold text-gray-400">
+                    <tr>
+                        <th class="px-6 py-3">Opportunity</th>
+                        <th class="px-6 py-3">Applied Date</th>
+                        <th class="px-6 py-3">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    {% for app in recent_applications %}
+                    <tr class="hover:bg-blue-50/30 transition-colors">
+                        <td class="px-6 py-4 font-semibold text-gray-700">{{ app.opportunity.title }}</td>
+                        <td class="px-6 py-4 text-xs text-gray-500">{{ app.applied_on|date:"d M Y" }}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase 
+                                {% if app.status == 'selected' %}bg-green-100 text-green-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                                {{ app.get_status_display }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" class="px-6 py-10 text-center text-gray-400 italic">No applications found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="space-y-6">
+        <div class="bg-[#1E3A8A] p-6 rounded-xl text-white shadow-xl relative overflow-hidden">
+            <h4 class="font-bold text-lg mb-2 relative z-10">AI Mock Practice</h4>
+            <p class="text-sm text-blue-100 mb-6 relative z-10">Improve your confidence with video-AI behavioral analysis.</p>
+            <a href="{% url 'ai_interview_intro' %}" class="bg-[#10B981] text-white px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest hover:shadow-[0_0_15px_rgba(16,185,129,0.5)] transition-all inline-block relative z-10">Start Session</a>
+            <i class="fa-solid fa-robot absolute -bottom-4 -right-2 text-6xl text-white/10"></i>
+        </div>
+    </div>
+</div>
+{% endblock %}

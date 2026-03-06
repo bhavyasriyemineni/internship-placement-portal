@@ -1,0 +1,177 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Recruiter Console | CareerBridge{% endblock %}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-blue: #1E3A8A;
+            --accent-green: #10B981;
+            --bg-soft: #F8FAFC;
+            --card-white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-soft);
+            color: #1E293B;
+        }
+
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+
+        /* Sidebar Styling */
+        .sidebar {
+            background-color: var(--primary-blue);
+            width: 280px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-item {
+            position: relative;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            margin: 4px 16px;
+        }
+
+        .nav-item:hover {
+            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); 
+        }
+
+        .nav-item.active {
+            background: var(--accent-green);
+            color: #FFFFFF;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Card & Elevation */
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #1E3A8A 0%, #172554 100%);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex min-h-screen overflow-hidden">
+
+    <aside class="sidebar h-screen sidebar-gradient flex flex-col fixed left-0 top-0 z-50">
+        <div class="p-8 flex items-center gap-3">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                <i class="fa-solid fa-briefcase text-[#1E3A8A] text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-poppins font-bold text-white text-xl tracking-tight">Career<span class="text-[#10B981]">Recruit</span></h1>
+                <p class="text-[10px] text-blue-300 font-bold uppercase tracking-widest">Industry Portal</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 mt-4 space-y-1">
+            <a href="{% url 'recruiter_dashboard' %}" class="nav-item flex items-center gap-4 py-3.5 px-4 {% if request.resolver_match.url_name == 'recruiter_dashboard' %}active{% endif %}">
+                <i class="fa-solid fa-chart-line w-5"></i>
+                <span class="text-sm">Dashboard Overview</span>
+            </a>
+            
+            <a href="{% url 'my_postings' %}" class="nav-item flex items-center gap-4 py-3.5 px-4 {% if 'posting' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-list-check w-5"></i>
+                <span class="text-sm">Manage Postings</span>
+            </a>
+
+            <a href="{% url 'post_opportunity' %}" class="nav-item flex items-center gap-4 py-3.5 px-4 {% if request.resolver_match.url_name == 'post_opportunity' %}active{% endif %}">
+                <i class="fa-solid fa-plus-circle w-5"></i>
+                <span class="text-sm">Post New Opportunity</span>
+            </a>
+
+            <div class="px-8 pt-6 pb-2 text-[10px] font-black text-blue-400 uppercase tracking-[0.2em]">Candidate Analysis</div>
+            
+            <a href="{% url 'my_postings' %}" class="nav-item flex items-center gap-4 py-3.5 px-4">
+                <i class="fa-solid fa-user-graduate w-5"></i>
+                <span class="text-sm">View All Applicants</span>
+            </a>
+
+            <a href="{% url 'recruiter_dashboard' %}" class="nav-item flex items-center gap-4 py-3.5 px-4">
+                <i class="fa-solid fa-robot w-5"></i>
+                <span class="text-sm">AI Interview Insights</span>
+            </a>
+        </nav>
+
+        <div class="p-6 border-t border-blue-800/50">
+            <a href="{% url 'company_profile_edit' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 text-blue-200 transition-all text-sm mb-2">
+                <i class="fa-solid fa-gear"></i> Company Settings
+            </a>
+            <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all text-sm font-bold">
+                <i class="fa-solid fa-power-off"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 ml-[280px] h-screen overflow-y-auto">
+        <header class="glass-header sticky top-0 z-40 h-20 flex items-center justify-between px-10">
+            <div class="flex items-center gap-4">
+                <h2 class="font-poppins font-bold text-gray-800 text-lg">{% block page_title %}Recruiter Dashboard{% endblock %}</h2>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <a href="{% url 'notification_list' %}" class="relative w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[#1E3A8A] transition-all hover:bg-slate-100 rounded-xl">
+                    <i class="fa-solid fa-bell text-xl"></i>
+                    {% if unread_notifications > 0 %}
+                    <span class="absolute top-2 right-2 w-4 h-4 bg-red-500 text-white text-[8px] font-black rounded-full flex items-center justify-center border-2 border-white animate-pulse">
+                        {{ unread_notifications }}
+                    </span>
+                    {% endif %}
+                </a>
+
+                <div class="flex items-center gap-4 pl-6 border-l border-slate-200">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-bold text-slate-800">{{ request.user.recruiter_profile.company_name|default:"Corporate Partner" }}</p>
+                        <p class="text-[10px] font-black text-[#10B981] uppercase tracking-wider">Industrial Partner</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden">
+                        {% if request.user.recruiter_profile.company_logo %}
+                            <img src="{{ request.user.recruiter_profile.company_logo.url }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <i class="fa-solid fa-building text-[#1E3A8A]"></i>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {% if messages %}
+                <div class="mb-8 space-y-3">
+                    {% for message in messages %}
+                        <div class="p-4 rounded-xl text-sm font-bold flex items-center gap-3 
+                            {% if message.tags == 'success' %}bg-emerald-50 text-emerald-700 border border-emerald-100
+                            {% else %}bg-blue-50 text-blue-800 border border-blue-100{% endif %}">
+                            <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% else %}fa-circle-info{% endif %}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block dashboard_content %}{% endblock %}
+        </div>
+    </main>
+
+</body>
+</html>
